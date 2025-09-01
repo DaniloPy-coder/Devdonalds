@@ -20,7 +20,7 @@ const eslintConfig = [
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
     },
-  }
+  },
 ];
 
 export default eslintConfig;
