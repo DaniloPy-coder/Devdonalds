@@ -28,7 +28,7 @@ const RestaurantHeader = ({ restaurant }: RestaurantHeaderProps) => {
         <ChevronsLeftIcon />
       </Button>
 
-      <Image src={restaurant.coverImageUrl} alt={restaurant.name} fill />
+      <Image src={restaurant.coverImageUrl} alt={restaurant.name} fill className="object-cover" />
 
       <Button
         variant="secondary"
