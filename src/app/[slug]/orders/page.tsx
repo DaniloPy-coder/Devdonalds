@@ -5,15 +5,16 @@ import CpfForm from "./components/cpf_form";
 import OrderList from "./components/order_list";
 
 interface OrdersPageProps {
-    searchParams: { cpf?: string }
+    searchParams?: { cpf?: string }
 }
 
 const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
-    const { cpf } = searchParams;
+    const cpf = searchParams?.cpf
 
     if (!cpf || !isValidCpf(cpf)) {
         return <CpfForm />
     }
+
     const orders = await db.order.findMany({
         orderBy: {
             createdAt: 'desc'
