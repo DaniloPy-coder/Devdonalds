@@ -60,7 +60,6 @@ const OrderList = ({ orders }: OrderListProps) => {
                         `}
                         >
                             {getStatusLabel(order.status)}
-                            Em preparo
                         </div>
                         <div className="gap-2 flex items-center">
                             <div className="relative h-5 w-5">
