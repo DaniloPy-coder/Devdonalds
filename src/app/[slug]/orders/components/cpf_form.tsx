@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
-import { z } from "zod"
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +15,7 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
@@ -38,10 +37,10 @@ const CpfForm = () => {
     })
 
     const router = useRouter()
-    const pathname = usePathname
+    const pathname = usePathname()
 
     const onSubmit = (data: FormSchema) => {
-        router.push(`${pathname}?cpf=${removeCpfPontuation(data.cpf)}`)
+        router.replace(`${pathname}?cpf=${removeCpfPontuation(data.cpf)}`)
     }
 
     const handleCancel = () => {
@@ -50,7 +49,6 @@ const CpfForm = () => {
 
     return (
         <Drawer open>
-            <DrawerTrigger>Open</DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader>
                     <DrawerTitle>Visualizar pedidos</DrawerTitle>
@@ -71,9 +69,8 @@ const CpfForm = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
                         <DrawerFooter>
-                            <Button variant="destructive" className="w-full rounded-full">Confirmar</Button>
+                            <Button type="submit" variant="destructive" className="w-full rounded-full">Confirmar</Button>
                             <DrawerClose asChild>
                                 <Button onClick={handleCancel} variant="outline" className="w-full rounded-full">Cancelar</Button>
                             </DrawerClose>
