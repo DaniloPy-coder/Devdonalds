@@ -4,11 +4,11 @@ import { isValidCpf, removeCpfPontuation } from "../menu/helpers/cpf";
 import CpfForm from "./components/cpf_form";
 import OrderList from "./components/order_list";
 
-const OrdersPage = async ({
-    searchParams,
-}: {
-    searchParams?: Record<string, string | undefined>;
-}) => {
+interface OrdersPageProps {
+    searchParams?: { cpf?: string };
+}
+
+const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
     const cpf = searchParams?.cpf;
 
     if (!cpf || !isValidCpf(cpf)) {
