@@ -6,19 +6,19 @@ import { db } from "@/lib/prisma";
 import ConsuptionMethodOption from "./components/consuption-method-option";
 
 interface RestaurantPageprops {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 const RestaurantPage = async ({ params }: RestaurantPageprops) => {
-  const { slug } = await params;
+  const { slug } = params;
   const restaurant = await db.restaurant.findUnique({ where: { slug } });
   if (!restaurant) return notFound();
   return (
     <div className="flex h-screen flex-col items-center justify-center px-6 pt-24">
       <div className="flex flex-col items-center gap-2">
         <Image
-          src={restaurant?.avatarImageUrl}
-          alt={restaurant?.name}
+          src={restaurant.avatarImageUrl}
+          alt={restaurant.name}
           width={82}
           height={82}
         />
