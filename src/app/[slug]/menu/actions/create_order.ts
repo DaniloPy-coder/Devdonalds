@@ -1,6 +1,7 @@
 "use server"
 
 import { ConsumptionMethod } from "@prisma/client"
+import { redirect } from "next/navigation"
 
 import { db } from "@/lib/prisma"
 
@@ -44,7 +45,7 @@ export const createOrder = async (input: CreateOrderInput) => {
         price: productsWithPrices.find((p) => p.id === product.id)!.price,
     }));
 
-    const order = await db.order.create({
+    await db.order.create({
         data: {
             status: 'PENDING',
             customerName: input.customerName,
@@ -60,5 +61,5 @@ export const createOrder = async (input: CreateOrderInput) => {
             restaurantId: restaurant.id
         }
     })
-    return order
+    redirect(`/${input.slug}/orders`)
 }

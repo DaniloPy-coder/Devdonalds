@@ -21,7 +21,7 @@ const CartSheet = () => {
 
     return (
         <Sheet open={isOpen} onOpenChange={toggleCart}>
-            <SheetTrigger>Open</SheetTrigger>
+            <SheetTrigger>Abrir o carrinho</SheetTrigger>
             <SheetContent className="w-[80%]">
                 <SheetHeader>
                     <SheetTitle className="text-left">Sacola</SheetTitle>
