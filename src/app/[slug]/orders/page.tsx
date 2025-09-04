@@ -5,40 +5,39 @@ import CpfForm from "./components/cpf_form";
 import OrderList from "./components/order_list";
 
 interface OrdersPageProps {
-    searchParams?: { cpf?: string };
+    searchParams: Promise<{ cpf: string }>;
 }
 
 const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
-    const cpf = searchParams?.cpf;
-
-    if (!cpf || !isValidCpf(cpf)) {
-        return <CpfForm />
+    const { cpf } = await searchParams;
+    if (!cpf) {
+        return <CpfForm />;
     }
-
+    if (!isValidCpf(cpf)) {
+        return <CpfForm />;
+    }
     const orders = await db.order.findMany({
         orderBy: {
-            createdAt: 'desc'
+            createdAt: "desc",
         },
         where: {
-            customerCpf: removeCpfPontuation(cpf)
+            customerCpf: removeCpfPontuation(cpf),
         },
         include: {
             restaurant: {
                 select: {
                     name: true,
-                    avatarImageUrl: true
-                }
+                    avatarImageUrl: true,
+                },
             },
             orderProducts: {
                 include: {
-                    product: true
-                }
-            }
-        }
-    })
-    return (
-        <OrderList orders={orders} />
-    );
-}
+                    product: true,
+                },
+            },
+        },
+    });
+    return <OrderList orders={orders} />;
+};
 
 export default OrdersPage;
