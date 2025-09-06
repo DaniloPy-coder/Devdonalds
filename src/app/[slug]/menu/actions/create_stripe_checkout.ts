@@ -47,7 +47,7 @@ export const createStripeCheckout = async ({
         mode: 'payment',
         success_url: `${origin}/${slug}/orders?${searchParams.toString()}`,
         cancel_url: `${origin}/${slug}/orders?${searchParams.toString()}`,
-        metadata: { orderId },
+        metadata: { orderId: String(orderId) },
         line_items: products.map((product) => {
             const dbProduct = productsWithPrices.find((p) => p.id === product.id)!;
             return {

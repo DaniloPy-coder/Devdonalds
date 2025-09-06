@@ -60,7 +60,7 @@ export const createOrder = async (input: CreateOrderInput) => {
             restaurantId: restaurant.id
         }
     })
-    revalidatePath(`/${input.slug}/orders`)
+    revalidatePath("/orders")
     // redirect(`/${input.slug}/orders?cpf=${removeCpfPontuation(input.customerCpf)}`)
     return order
 }
