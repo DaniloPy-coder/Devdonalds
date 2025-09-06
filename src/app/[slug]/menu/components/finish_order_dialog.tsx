@@ -1,14 +1,14 @@
 "use client"
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ConsumptionMethod } from '@prisma/client';
+import { loadStripe } from '@stripe/stripe-js';
 import { Loader2Icon } from 'lucide-react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { useContext, useTransition } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
-import { toast } from 'sonner';
-import { z } from 'zod'
+import { z } from 'zod';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +20,12 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
 import { createOrder } from '../actions/create_order';
+import { createStripeCheckout } from '../actions/create_stripe_checkout';
 import { CartContext } from '../contexts/cart';
 import { isValidCpf } from '../helpers/cpf';
 
@@ -51,8 +52,8 @@ interface FinishOrderDialogProps {
 const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
     const { slug } = useParams<{ slug: string }>();
     const { products } = useContext(CartContext);
-    const [isPending, startTransition] = useTransition()
     const searchParams = useSearchParams();
+    const [isLoading, setIsLoading] = useState(false);
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -64,21 +65,35 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
     })
     const onSubmit = async (data: FormSchema) => {
         try {
+            setIsLoading(true);
             const consumptionMethod = searchParams.get("consumptionMethod") as ConsumptionMethod;
-            startTransition(async () => {
-                await createOrder({
-                    consumptionMethod,
-                    customerCpf: data.cpf,
-                    customerEmail: data.email,
-                    customerName: data.name,
-                    products,
-                    slug
-                })
-                onOpenChange(false)
-                toast.success('Pedido realizado com sucesso!')
+
+            const order = await createOrder({
+                consumptionMethod,
+                customerCpf: data.cpf,
+                customerEmail: data.email,
+                customerName: data.name,
+                products,
+                slug
+            })
+            const { sessionId } = await createStripeCheckout({
+                products,
+                orderId: order.id,
+                slug,
+                consumptionMethod,
+                cpf: data.cpf
+            })
+            if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
+            const stripe = await loadStripe(
+                process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
+            );
+            stripe?.redirectToCheckout({
+                sessionId: sessionId,
             })
         } catch (error) {
             console.log(error)
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -134,12 +149,12 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
                                 )}
                             />
                             <DrawerFooter>
-                                <Button disabled={isPending} type='submit' variant="destructive" className='rounded-full'>
-                                    {isPending && <Loader2Icon className='animate-spin' />}
+                                <Button disabled={isLoading} type='submit' variant="destructive" className='rounded-full'>
+                                    {isLoading && <Loader2Icon className='animate-spin' />}
                                     Finalizar
                                 </Button>
-                                <DrawerClose>
-                                    <Button type='submit' variant="outline" className='w-full rounded-full'>Cancelar</Button>
+                                <DrawerClose asChild>
+                                    <Button variant="outline" className='w-full rounded-full'>Cancelar</Button>
                                 </DrawerClose>
                             </DrawerFooter>
                         </form>
