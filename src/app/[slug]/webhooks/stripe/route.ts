@@ -4,13 +4,15 @@ import Stripe from "stripe";
 
 import { db } from "@/lib/prisma";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     if (!process.env.STRIPE_SECRET_KEY) {
         throw new Error("Missing Stripe secret key");
     }
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: "2025-08-27.basil",
+    })
 
-    const signature = request.headers.get("stripe-signature");
+    const signature = req.headers.get("stripe-signature");
     if (!signature) {
         console.error(" Missing Stripe signature header");
         return NextResponse.error();
@@ -21,7 +23,7 @@ export async function POST(request: Request) {
         throw new Error("Missing Stripe webhook secret key");
     }
 
-    const text = await request.text();
+    const text = await req.text();
 
     let event: Stripe.Event;
     try {

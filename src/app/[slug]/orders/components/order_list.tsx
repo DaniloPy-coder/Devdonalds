@@ -58,7 +58,7 @@ const OrderList = ({ orders }: OrderListProps) => {
                 <ScrollTextIcon />
                 <h2 className="text-lg font-semibold">Meus Pedidos</h2>
             </div>
-            {orders.map(order => (
+            {orders.map((order) => (
                 <Card key={order.id}>
                     <CardContent className="p-5 space-y-4">
                         <div className={`w-fit rounded-full px-2 py-1 text-xs font-semibold text-white
