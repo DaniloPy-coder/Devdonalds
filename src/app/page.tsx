@@ -1,5 +1,6 @@
-const HomePage = () => {
-  return <h1 className="text-red-500">Welcome to Dev Donalds</h1>;
-};
+import { redirect } from "next/navigation";
 
-export default HomePage;
+export default function RootPage() {
+  const defaultSlug = "Dev-donalds";
+  redirect(`/${defaultSlug}`);
+}
